@@ -2,9 +2,9 @@ from tkinter import ttk
 
 class Animal:
 
-    def __init__(self, col, row):
-        self.col = col
-        self.row = row
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
 
     @staticmethod
     def color():
