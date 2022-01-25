@@ -12,6 +12,12 @@
 	},
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
+		"terminal.integrated.profiles.linux": {
+			"fish": {
+				"path": "/usr/bin/fish"
+			},
+		},
+		"terminal.integrated.defaultProfile.linux": "fish",
 		"python.defaultInterpreterPath": "/usr/local/bin/python",
 		"python.linting.enabled": true,
 		"python.linting.pylintEnabled": true,
@@ -23,7 +29,10 @@
 		"python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
 		"python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
 		"python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
-		"python.linting.pylintPath": "/usr/local/py-utils/bin/pylint"
+		"python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
+		"dotfiles.repository": "mkapra/dotfiles",
+		"dotfiles.targetPath": "~/dotfiles",
+		"dotfiles.installCommand": "~/dotfiles/install.sh"
 	},
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
