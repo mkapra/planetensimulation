@@ -1,52 +1,44 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
-// https://github.com/microsoft/vscode-dev-containers/tree/v0.209.6/containers/python-3
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.209.6/containers/javascript-node
 {
-	"name": "Python 3",
+	"name": "Node.js",
 	"build": {
 		"dockerfile": "Dockerfile",
-		"context": "..",
+		// Update 'VARIANT' to pick a Node version: 16, 14, 12.
+		// Append -bullseye or -buster to pin to an OS version.
+		// Use -bullseye variants on local arm64/Apple Silicon.
 		"args": {
-			"VARIANT": "3.10-bullseye",
-			"NODE_VERSION": "lts/*"
+			"VARIANT": "16-bullseye"
 		}
 	},
+
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
 		"terminal.integrated.profiles.linux": {
 			"fish": {
 				"path": "/usr/bin/fish"
-			},
+			}
 		},
 		"terminal.integrated.defaultProfile.linux": "fish",
-		"python.defaultInterpreterPath": "/usr/local/bin/python",
-		"python.linting.enabled": true,
-		"python.linting.pylintEnabled": true,
-		"python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
-		"python.formatting.blackPath": "/usr/local/py-utils/bin/black",
-		"python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
-		"python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
-		"python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
-		"python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
-		"python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
-		"python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
-		"python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
 		"dotfiles.repository": "mkapra/dotfiles",
-		"dotfiles.targetPath": "~/dotfiles",
-		"dotfiles.installCommand": "~/dotfiles/install.sh"
+		"css.validate": false
 	},
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"ms-python.python",
-		"ms-python.vscode-pylance"
+		"dbaeumer.vscode-eslint",
+		"ecmel.vscode-html-css",
+		"bradlc.vscode-tailwindcss",
+		"dsznajder.es7-react-js-snippets"
 	],
+
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
+
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pip3 install --user -r requirements.txt",
+	"postCreateCommand": "cd planetensimulation && npm install",
 	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-	"remoteUser": "vscode",
+	"remoteUser": "node",
 	"features": {
-		"git": "latest",
-		"github-cli": "latest"
+		"git": "latest"
 	}
 }
