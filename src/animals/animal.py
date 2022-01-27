@@ -2,10 +2,12 @@ from tkinter import ttk
 
 class Animal:
 
-    def __init__(self, x, y):
+    breed_age = None
+    color = None
+
+    def __init__(self, x, y, age):
         self.x = x
         self.y = y
+        self.age = age
 
-    @staticmethod
-    def color():
-        pass
+   
