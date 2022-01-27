@@ -13,7 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      ref: ui_mkapra
+      with:
+        ref: ui_mkapra
 
     - name: Deploy react app to github pages
       uses: tanwanimohit/deploy-react-to-ghpages@v1.0.1
