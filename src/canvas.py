@@ -1,11 +1,34 @@
 import numpy as numpy
 
 
-class Canvas:
-    def __init__(self, x, y):
-        self.x = int(x)
-        self.y = int(y)
+class Canvas(dict):
+    """The Canvas is represents as a dictionary"""
+
+    def __init__(self, *args, **kwargs):
+        """Setting up out constructor."""
+        super(Canvas, self).__init__(*args, **kwargs)
         self.world = numpy.zeros((self.x, self.y), dtype=int)
+
+    def __missing__(self, *args, **kwargs):
+        """An empty cell returns value zero.
+
+        This is what lets us store a huge board and ignore dead cells.
+        An Array based implementation would be very space intensive and
+        expensive to iterate over."""
+        return 0
+
+    def update_animal(self, x: int, y:int):
+        """Check in each tick the animal. Determine if the animal lives or dies.
+
+        :return
+        """
+
+
+    def queue_animals(self):
+        ainimals = []
+        for x, y in self.keys():
+            for
+
 
     def calculate_neighbours(self, xOff, yOff):
         neighbours = list()
