@@ -5,8 +5,13 @@ class Animal:
     Represents an animal
     """
 
-    def __init__(self, id: int, color: str, breed_age: int):
-        self.id = id
+    enum = 0
+    color = ''
+    age = 0
+    breed_age = 0
+
+    def __init__(self, enum: int, color: str, breed_age: int):
+        self.enum = enum
         self.color = color
         self.age = 0
         self.breed_age = breed_age
@@ -27,8 +32,8 @@ class Fish(Animal):
     Represents a fish
     """
 
-    def __init__(self, color='green', breed_age=5):
-        super().__init__(1, color, breed_age)
+    def __init__(self, enum: int = 1, color='green', breed_age=5):
+        super().__init__(enum, color, breed_age)
 
 
 class Shark(Animal):
@@ -36,10 +41,10 @@ class Shark(Animal):
     Represents a shark
     """
 
-    def __init__(self, color='red', breed_age=8, max_hunger: int = 5):
+    def __init__(self, enum: int = 2, color='red', breed_age=8, max_hunger: int = 5):
         self.hunger = 0
         self.max_hunger = max_hunger
-        super().__init__(2, color, breed_age)
+        super().__init__(enum, color, breed_age)
 
     def eats(self):
         self.hunger = 0
