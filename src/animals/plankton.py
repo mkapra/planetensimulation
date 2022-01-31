@@ -1,5 +1,6 @@
+from animals.animal import Animal
 
-class Plankton:
+class Plankton(Animal):
 
     color = 'blue'
 

@@ -1,14 +1,11 @@
 import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-# from animals.animal import Animal
-# from animals.fish import Fish
-# from animals.shark import Shark
 from matplotlib import pyplot as plt
 import matplotlib.animation as animation
 from collections import deque
-import random
+from numpy import diff
 
-HISTORY_LEN = 1200
+HISTORY_LEN = 5000
 
 
 # https://stackoverflow.com/questions/43477681/how-to-speed-up-tkinter-embedded-matplot-lib-and-python
@@ -30,7 +27,7 @@ class App(tk.Frame):
         self.animation = None
 
         self.main = main
-
+        self.master = master
         self.window = tk.Toplevel(master)
         self.window_world = tk.Frame(self.window)
         self.window_ctrl = tk.Frame(self.window)
@@ -40,8 +37,8 @@ class App(tk.Frame):
         self.frames: list[list[tk.Canvas]] = \
             [[self.create_canvas(x, y) for x in range(x_size)] for y in range(y_size)]
 
-        for x in range(y_size):
-            for y in range(x_size):
+        for x in range(x_size):
+            for y in range(y_size):
                 color = world[x][y].color
                 self.frames[x][y].configure(background=color)
 
@@ -49,21 +46,21 @@ class App(tk.Frame):
         lbl.grid(column=0, row=0)
 
         self.points_ent = tk.Entry(self.window_ctrl, width=5)
-        self.points_ent.insert(0, '500')
+        self.points_ent.insert(0, '5000')
         self.points_ent.grid(column=1, row=0)
 
         lbl = tk.Label(self.window_ctrl, text="update interval (ms)")
         lbl.grid(column=2, row=0)
 
         self.interval = tk.Entry(self.window_ctrl, width=5)
-        self.interval.insert(0, '500')
+        self.interval.insert(0, '100')
         self.interval.grid(column=3, row=0)
 
         self.btn = tk.Button(self.window_ctrl, text='Start', command=self.on_click)
         self.btn.grid(column=4, row=0)
 
-        self.btn = tk.Button(self.window_ctrl, text='Tick', command=self.tick)
-        self.btn.grid(column=5, row=0)
+        self.tick_btn = tk.Button(self.window_ctrl, text='Tick', command=self.tick)
+        self.tick_btn.grid(column=5, row=0)
 
         self.fig = plt.Figure()
         self.ax1 = self.fig.add_subplot(111)
@@ -86,7 +83,11 @@ class App(tk.Frame):
 
         # If sharksTotal or fishTotal is 0, then the simulation is over
         if self.stats["fishTotal"][-1] == 0 or self.stats["sharkTotal"][-1] == 0:
-           self.on_click() 
+            print("Simulation is over")
+            print("Fish: " + str(self.stats["fishTotal"][-1]))
+            print("Sharks: " + str(self.stats["sharkTotal"][-1]))
+
+            self.on_click()
 
     def on_click(self):
         if self.animation is None:
@@ -94,10 +95,25 @@ class App(tk.Frame):
         if self.running:
             self.animation.event_source.stop()
             self.btn.config(text='Un-Pause')
+            self.show_diff()
         else:
             self.animation.event_source.start()
             self.btn.config(text='Pause')
         self.running = not self.running
+
+    def show_diff(self):
+        dx = 1
+        y = self.stats["fishTotal"]
+        dy = diff(y)/dx
+
+        self.fig_diff = plt.Figure()
+        self.ax_diff = self.fig_diff.add_subplot(111)
+        self.line_diff, = self.ax_diff.plot(dy, lw=2)
+        self.ax_diff.grid()
+        windows = tk.Toplevel(self.master)
+        self.canvas_diff = FigureCanvasTkAgg(self.fig_diff, master=windows)
+        self.canvas_diff.draw()
+        self.canvas_diff.get_tk_widget().pack()
 
     def start(self):
         self.xdata = deque([], maxlen=HISTORY_LEN)
