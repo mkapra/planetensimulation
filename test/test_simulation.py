@@ -123,3 +123,83 @@ class TestStatistics(TestCase):
         for item in stats_dict.values():
             self.assertEqual(length + 1, len(item))
 
+
+class TestSimulation(TestCase):
+    def test_random_pos_loop(self):
+        for i in range(2, 10):
+            x = random.randint(0, 1000)
+            y = random.randint(0, 1000)
+            sim = Simulation(x, y, 2, 2)
+            new_pos = sim.random_pos()
+            self.assertIsInstance(new_pos, tuple)
+            self.assertLess(new_pos[0], x)
+            self.assertLess(new_pos[1], y)
+
+    def test_init_simulation_not_none(self):
+        new_sim = Simulation(20, 20, 10, 2)
+        self.assertIsNotNone(new_sim)
+
+    def test_init_simulation_raises_exception(self):
+        with self.assertRaises(Exception):
+            Simulation(0, 20, 10, 2)
+        with self.assertRaises(Exception):
+            Simulation(20, 0, 10, 2)
+        with self.assertRaises(Exception):
+            Simulation(20, 20, 0, 2)
+        with self.assertRaises(Exception):
+            Simulation(20, 20, 10, 0)
+
+    def test_init_simulation_random_field(self):
+        for i in range(4, 20):
+            sim = Simulation(10, 10, i, i)
+            self.assertEqual(2 * i, len(sim._fishes) + len(sim._sharks))
+
+    def test_get_all_positions(self):
+        for i in range(4, 20):
+            sim = Simulation(10, 10, i, i)
+            self.assertEqual(2 * i, len(sim.get_all_positions()))
+
+    def test_get_unified_dict(self):
+        for i in range(4, 20):
+            sim = Simulation(10, 10, i, i)
+            all_positions = sim.get_unified_dict()
+            self.assertIsInstance(all_positions, dict)
+            self.assertEqual(2 * i, len(all_positions))
+            item = all_positions.popitem()
+            self.assertIsInstance(item[0], tuple)
+            self.assertIsInstance(item[1], Animal)
+
+    def test_translate_position(self):
+        x = 20
+        y = 20
+        sim = Simulation(x, y, x, x)
+
+        for i in range(-x, x*2):
+            for j in range(-y, y * 2):
+                new_pos = sim._translate_pos(sim, (i, j))
+                assertion = i % x, j % y
+                self.assertIn(new_pos[0], range(0, x))
+                self.assertIn(new_pos[1], range(0, y))
+                self.assertEqual(assertion, new_pos)
+
+    def test_get_free_neighbour_space(self):
+        x = 10
+        y = 10
+        all_possible_positions = set()
+
+        for i in range(0, x):
+            for j in range(0, y):
+                all_possible_positions.add((i, j))
+
+        for amount in range(2, 20):
+            sim = Simulation(x, y, amount, amount)
+            all_taken_positions = sim.get_all_positions()
+
+            # Create a set with all free positions in the simulation
+            free_positions = set()
+            free_positions.update(all_possible_positions)
+            free_positions.difference_update(all_taken_positions)
+
+            for free_pos in free_positions:
+                self.assertNotIn(sim._get_free_neighbour_space(free_pos),
+                                 all_taken_positions)
