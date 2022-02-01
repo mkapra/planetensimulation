@@ -35,6 +35,7 @@ class Statistics:
     NEW_SHARK = 'sharkNew'
     DIED_FISH = 'fishDied'
     DIED_SHARK = 'sharkDied'
+    SIM_OVER = 'simulationEnded'
     ALL_KEYS = {TOTAL_FISH, TOTAL_SHARK, NEW_FISH, NEW_SHARK, DIED_FISH, DIED_SHARK}
 
     def __init__(self):
@@ -45,22 +46,31 @@ class Statistics:
         self._stats.clear()
         for key in self.ALL_KEYS:
             self._stats[key] = []
-        self.add_cycle()
+        self._stats[self.SIM_OVER] = [0]
 
-    def get_stats(self):
+    def get_stats(self, key=""):
+        if key != "":
+            return self._stats.get(key)
         return self._stats
 
     def add_cycle(self):
-        for _, item in self._stats.items():
-            item.append(0)
+        for key in self.ALL_KEYS:
+            self.get_stats(key).append(0)
+
+    def set_sim_over(self):
+        self._stats[self.SIM_OVER] = [1]
+
+    def is_sim_over(self):
+        return self._stats[self.SIM_OVER][0]
 
     def update_total(self, fish_total: int, shark_total: int):
         self._stats.get(self.TOTAL_FISH)[-1] = fish_total
         self._stats.get(self.TOTAL_SHARK)[-1] = shark_total
 
     def update_from_stats(self, stats: dict[str, list[int]]):
-        for key, item in stats.items():
+        for key in self.ALL_KEYS:
             self._stats.get(key).extend(stats.get(key))
+        self._stats[self.SIM_OVER] = stats.get(self.SIM_OVER)
 
     def shark_died(self):
         self._stats.get(self.DIED_SHARK)[-1] += 1
@@ -96,9 +106,14 @@ class Simulation:
         self._fishes = Container()
         self._sharks = Container()
         self._stats = Statistics()
-        self._random_init(amount_fish, amount_sharks)
+        # Initialize the simulation with random placed animals
+        self.reset(amount_fish, amount_sharks)
 
-    def _random_init(self, amount_fish: int, amount_sharks: int):
+    def __str__(self):
+        return f"Simulation with the size x={self.size_x} and y={self.size_y}.\n" \
+               f"Contains at the moment {len(self._fishes)} fishes and {len(self._sharks)} sharks."
+
+    def reset(self, amount_fish: int, amount_sharks: int):
         """
         Initialize this simulation with a given amount of fishes and sharks
         :param amount_fish: Amount of fishes
@@ -109,24 +124,28 @@ class Simulation:
         self._sharks.clear()
 
         while len(self._fishes) < amount_fish:
-            new_pos = self.random_pos()
-            if new_pos not in self.get_all_positions():
+            new_pos = self._random_pos()
+            if new_pos not in self._get_all_positions():
                 self._fishes[new_pos] = Fish()
 
         while len(self._sharks) < amount_sharks:
-            new_pos = self.random_pos()
-            if new_pos not in self.get_all_positions():
+            new_pos = self._random_pos()
+            if new_pos not in self._get_all_positions():
                 self._sharks[new_pos] = Shark()
 
         # Add initialized fishes and sharks to statistics
+        self._stats.add_cycle()
         self._stats.update_total(len(self._fishes), len(self._sharks))
 
-    def random_pos(self):
+    def _random_pos(self):
         ran_x = random.randint(0, self.size_x - 1)
         ran_y = random.randint(0, self.size_y - 1)
         return ran_x, ran_y
 
-    def get_all_positions(self):
+    def get_stats(self):
+        return self._stats.get_stats()
+
+    def _get_all_positions(self):
         """
         Getter for all already taken positions
         :return:
@@ -171,21 +190,22 @@ class Simulation:
     def _translate_pos(self, pos: tuple):
         return pos[0] % self.size_x, pos[1] % self.size_y
 
-    def move_creatures(self):
+    def _move_creatures(self):
         """
         Moves all the creatures in the simulations and kills creatures if necessary
         """
 
         # Skip task if there are no more sharks
         if len(self._sharks) == 0:
+            self._stats.set_sim_over()
             return
 
         self._stats.add_cycle()
-        self.move_fishes()
-        self.move_sharks()
+        self._move_fishes()
+        self._move_sharks()
         self._stats.update_total(len(self._fishes), len(self._sharks))
 
-    def move_fishes(self):
+    def _move_fishes(self):
         pos_fishes = set(self._fishes.keys())
         # Update fishes in the simulation
         for position in pos_fishes:
@@ -199,10 +219,11 @@ class Simulation:
 
                 # Breed new fish if possible
                 if self._fishes[new_pos].can_breed():
+                    self._fishes[new_pos].breed()
                     self._fishes[position] = Fish()
                     self._stats.fish_born()
 
-    def move_sharks(self):
+    def _move_sharks(self):
         # update sharks in the simulation
         pos_sharks = set(self._sharks.keys())
         for position in pos_sharks:
@@ -210,7 +231,7 @@ class Simulation:
             if not self._sharks[position].lives():
                 self._sharks.pop(position)
                 self._stats.shark_died()
-                break
+                continue
 
             movable = self._get_free_neighbour_space(position)
             if len(movable) > 0:
@@ -226,16 +247,19 @@ class Simulation:
 
                 # Breed new shark if possible
                 if self._sharks[new_pos].can_breed():
+                    self._sharks[new_pos].breed()
                     self._sharks[position] = Shark()
                     self._stats.shark_born()
 
-    def run(self, amount: int):
+    def run(self, amount: int=1):
+        self._stats.reset()
         for i in range(amount):
-            self.move_creatures()
-        return self._stats.get_stats()
+            self._move_creatures()
+        return self.get_stats()
 
 
 if __name__ == "__main__":
     print("Planetensimulation is starting...")
     sim = Simulation(10, 10, 60, 20)
-    print(sim.run(10))
+    for i in range (10):
+        print(sim.run())

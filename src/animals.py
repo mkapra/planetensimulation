@@ -17,10 +17,11 @@ class Animal:
         self.breed_age = breed_age
 
     def can_breed(self):
-        if self.breed_age == self.age:
+        return self.age >= self.breed_age
+
+    def breed(self):
+        if self.can_breed():
             self.age = 0
-            return True
-        return False
 
     def lives(self):
         self.age = self.age + 1

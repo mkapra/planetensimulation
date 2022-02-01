@@ -1,4 +1,5 @@
 import random
+import time
 from unittest import TestCase
 from main import Container, Statistics, Simulation
 from animals import Animal, Fish, Shark
@@ -56,7 +57,7 @@ class TestStatistics(TestCase):
 
     def test_get_stats_empty(self):
         stats_dict = self.stats.get_stats()
-        self.assertEqual(6, len(stats_dict))
+        self.assertEqual(7, len(stats_dict))
         for item in stats_dict.values():
             self.assertEqual(0, item[0])
 
@@ -79,7 +80,7 @@ class TestStatistics(TestCase):
     def test_stats_empty_reset(self):
         self.stats.reset()
         stats_dict = self.stats.get_stats()
-        self.assertEqual(6, len(stats_dict))
+        self.assertEqual(7, len(stats_dict))
         for item in stats_dict.values():
             self.assertEqual(0, item[0])
 
@@ -104,7 +105,7 @@ class TestStatistics(TestCase):
     def test_stats_update_from_stats_empty(self):
         self.stats.update_from_stats(self.update.get_stats())
         stats_dict = self.stats.get_stats()
-        self.assertEqual(6, len(stats_dict))
+        self.assertEqual(7, len(stats_dict))
         for item in stats_dict.values():
             self.assertEqual(0, item[0])
 
@@ -120,8 +121,8 @@ class TestStatistics(TestCase):
         # update statistics from update to stats
         self.stats.update_from_stats(self.update.get_stats())
         stats_dict = self.stats.get_stats()
-        for item in stats_dict.values():
-            self.assertEqual(length + 1, len(item))
+        for item in Statistics.ALL_KEYS:
+            self.assertEqual(length + 1, len(stats_dict.get(item)))
 
 
 class TestSimulation(TestCase):
@@ -130,7 +131,7 @@ class TestSimulation(TestCase):
             x = random.randint(0, 1000)
             y = random.randint(0, 1000)
             sim = Simulation(x, y, 2, 2)
-            new_pos = sim.random_pos()
+            new_pos = sim._random_pos()
             self.assertIsInstance(new_pos, tuple)
             self.assertLess(new_pos[0], x)
             self.assertLess(new_pos[1], y)
@@ -157,7 +158,7 @@ class TestSimulation(TestCase):
     def test_get_all_positions(self):
         for i in range(4, 20):
             sim = Simulation(10, 10, i, i)
-            self.assertEqual(2 * i, len(sim.get_all_positions()))
+            self.assertEqual(2 * i, len(sim._get_all_positions()))
 
     def test_get_unified_dict(self):
         for i in range(4, 20):
@@ -193,7 +194,7 @@ class TestSimulation(TestCase):
 
         for amount in range(2, 20):
             sim = Simulation(x, y, amount, amount)
-            all_taken_positions = sim.get_all_positions()
+            all_taken_positions = sim._get_all_positions()
 
             # Create a set with all free positions in the simulation
             free_positions = set()
@@ -203,3 +204,12 @@ class TestSimulation(TestCase):
             for free_pos in free_positions:
                 self.assertNotIn(sim._get_free_neighbour_space(free_pos),
                                  all_taken_positions)
+
+    def test_speed_of_simulation(self):
+        amount = 1000
+        sim = Simulation(80, 80, 1000, 300)
+        start = time.time()
+        sim.run(amount)
+        end = time.time()
+        print(sim)
+        print("Time needed for {} iterations: {:.4f}s".format(amount, end - start))
