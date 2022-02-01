@@ -6,9 +6,16 @@ import logging
 
 class Fish(Animal):
 
+    # Color of the fish in the world
     color = 'green'
+
+    # How many iterations to wait before giving birth
     breed_age = 5
+
+    # Starting amount of fish
     total = 5
+
+    # Global variable to keep track of the id of the next id
     id = 0
 
     def __init__(self, x, y, age):
@@ -21,9 +28,11 @@ class Fish(Animal):
     def __repr__(self):
         return f"F{self.age}"
 
+    # Check if the cell is free
     def is_empty(self, x, y, world):
         return type(world[x][y]) == Plankton
 
+    # Move to a random neighbouring cell and give birth if old enough
     def make_move(self, world, neighbours):
         # Pick a random neighbouring cell
         neighbour = random.choice(neighbours)
@@ -42,11 +51,12 @@ class Fish(Animal):
         self.y = neighbour.y
         world[self.x][self.y] = self
 
+    # Tick the fish
     def tick(self, world, x_size, y_size):
         # Look for free neighbouring cells
         neighbours = self.get_free_neighbours(self.x, self.y, x_size, y_size, world)
         if len(neighbours) > 0:
-            # Found a free neighbouring cell
+            # Found a free neighbouring cell, move there
             logging.debug(f"Fish {self.id} found free neighbour")
             self.make_move(world, neighbours)
 
