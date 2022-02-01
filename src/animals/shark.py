@@ -16,10 +16,7 @@ class Shark(Animal):
 
     # How many iterations to wait before dying of hunger
     max_hunger = 5
-
-    # Starting amount of sharks
-    total = 2
-
+    
     # Global variable to keep track of the next id
     id = 0
 

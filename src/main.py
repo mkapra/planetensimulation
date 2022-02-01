@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import random
+import argparse
 
 from canvas import *
 from animals.animal import Animal
@@ -9,15 +10,18 @@ from animals.plankton import Plankton
 import logging
 
 class Game():
-    def __init__(self):
+    def __init__(self, columns: 10, rows: 5, initial_fishes: 10, initial_sharks: 10):
         # Width of the world
-        self.x_size: int = 10
-
+        self.x_size = columns
+        
         # Height of the world
-        self.y_size: int = 5
-
+        self.y_size = rows
+        
+        self.intial_fishes = initial_fishes
+        self.initial_sharks = initial_sharks
+        
         # If there are more animals than there is space in the world, raise an error
-        if self.x_size * self.y_size < Fish.total + Shark.total:
+        if columns * rows < self.intial_fishes + self.initial_sharks:
             raise Exception("Not enough space for all animals")
 
         # Create the world
@@ -107,7 +111,7 @@ class Game():
         fishes_placed: int = 0
 
         # Place sharks randomly
-        while sharks_placed < Shark.total:
+        while sharks_placed < self.initial_sharks:
             x = random.randint(0, self.x_size - 1)
             y = random.randint(0, self.y_size - 1)
             if type(self.world[x][y]) is Plankton:
@@ -115,7 +119,7 @@ class Game():
                 sharks_placed += 1
 
         # Place fish randomly
-        while fishes_placed < Fish.total:
+        while fishes_placed < self.intial_fishes:
             x = random.randint(0, self.x_size - 1)
             y = random.randint(0, self.y_size - 1)
             if type(self.world[x][y]) is Plankton:
@@ -134,4 +138,20 @@ class Game():
 
 
 if __name__ == "__main__":
-    Game().run()
+    # create parser
+    parser = argparse.ArgumentParser()
+
+    # Add rows and columns to the parser
+    parser.add_argument("--rows", help="The rows of the field", type=int, default=10)
+    parser.add_argument("--columns", help="The columns of the field", type=int, default=5)
+    # Add max fishes and sharks to the parser
+    parser.add_argument(
+        "--initial_fishes", help="The number of fishes that are placed initially on the board", type=int, default=10)
+    parser.add_argument(
+        "--initial_sharks", help="The number of sharks that are placed initially on the board", type=int, default=10)
+
+    # parse the arguments
+    args = parser.parse_args()
+
+    Game(rows=args.rows, columns=args.columns, initial_fishes=args.initial_fishes,
+         initial_sharks=args.initial_sharks).run()
