@@ -8,7 +8,6 @@ class Fish(Animal):
 
     color = 'green'
     breed_age = 5
-    total = 5
     id = 0
 
     def __init__(self, x, y, age):

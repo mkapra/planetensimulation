@@ -11,7 +11,6 @@ class Shark(Animal):
     color = 'red'
     breed_age = 8
     max_hunger = 5
-    total = 2
     id = 0
 
     def __init__(self, x, y, age):
