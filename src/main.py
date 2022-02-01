@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import random
+import argparse
 
 from canvas import *
 from animals.animal import Animal
@@ -9,11 +10,10 @@ from animals.plankton import Plankton
 import logging
 
 class Game():
-    def __init__(self):
-        self.x_size: int = 10
-        self.y_size: int = 5
-
-        if self.x_size * self.y_size < Fish.total + Shark.total:
+    def __init__(self, columns: 10, rows: 5):
+        self.x_size = columns
+        self.y_size = rows
+        if columns * rows < Fish.total + Shark.total:
             raise Exception("Not enough space for all animals")
 
         self.world: list[list[Animal]] = []
@@ -114,4 +114,14 @@ class Game():
 
 
 if __name__ == "__main__":
-    Game().run()
+    # create parser
+    parser = argparse.ArgumentParser()
+
+    # Add rows and columns to the parser
+    parser.add_argument("--rows", help="The rows of the field", type=int, default=10)
+    parser.add_argument("--columns", help="The columns of the field", type=int, default=5)
+
+    # parse the arguments
+    args = parser.parse_args()
+
+    Game(rows=args.rows, columns=args.columns).run()
