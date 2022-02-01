@@ -10,12 +10,12 @@ from animals.plankton import Plankton
 import logging
 
 class Game():
-    def __init__(self, columns: 10, rows: 5, max_fishes: 10, max_sharks: 10):
+    def __init__(self, columns: 10, rows: 5, initial_fishes: 10, initial_sharks: 10):
         self.x_size = columns
         self.y_size = rows
-        self.max_fishes = max_fishes
-        self.max_sharks = max_sharks
-        if columns * rows < self.max_fishes + self.max_sharks:
+        self.intial_fishes = initial_fishes
+        self.initial_sharks = initial_sharks
+        if columns * rows < self.intial_fishes + self.initial_sharks:
             raise Exception("Not enough space for all animals")
 
         self.world: list[list[Animal]] = []
@@ -90,7 +90,7 @@ class Game():
         fishes_placed: int = 0
 
         # Place sharks
-        while sharks_placed < self.max_sharks:
+        while sharks_placed < self.initial_sharks:
             x = random.randint(0, self.x_size - 1)
             y = random.randint(0, self.y_size - 1)
             if type(self.world[x][y]) is Plankton:
@@ -98,7 +98,7 @@ class Game():
                 sharks_placed += 1
 
         # Place fish
-        while fishes_placed < self.max_fishes:
+        while fishes_placed < self.intial_fishes:
             x = random.randint(0, self.x_size - 1)
             y = random.randint(0, self.y_size - 1)
             if type(self.world[x][y]) is Plankton:
@@ -123,10 +123,13 @@ if __name__ == "__main__":
     parser.add_argument("--rows", help="The rows of the field", type=int, default=10)
     parser.add_argument("--columns", help="The columns of the field", type=int, default=5)
     # Add max fishes and sharks to the parser
-    parser.add_argument("--max_fishes", help="The number of fishes that are placed initially on the board", type=int, default=10)
-    parser.add_argument("--max_sharks", help="The number of sharks that are placed initially on the board", type=int, default=10)
+    parser.add_argument(
+        "--initial_fishes", help="The number of fishes that are placed initially on the board", type=int, default=10)
+    parser.add_argument(
+        "--initial_sharks", help="The number of sharks that are placed initially on the board", type=int, default=10)
 
     # parse the arguments
     args = parser.parse_args()
 
-    Game(rows=args.rows, columns=args.columns, max_fishes=args.max_fishes, max_sharks=args.max_sharks).run()
+    Game(rows=args.rows, columns=args.columns, initial_fishes=args.initial_fishes,
+         initial_sharks=args.initial_sharks).run()
