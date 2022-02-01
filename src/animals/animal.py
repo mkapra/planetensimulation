@@ -6,19 +6,20 @@ class Animal:
     def __init__(self):
         pass
 
+    # Check if neighbouring cells are free
     def get_free_neighbours(self, x, y, x_size, y_size, world):
         neighbours = []
 
-        # Check if cell above is free
+        # Check cell above
         if self.is_empty((x) % x_size, (y-1) % y_size, world):
             neighbours.append(world[(x) % x_size][(y-1) % y_size])
-        # Check if cell below is free
+        # Check cell below
         if self.is_empty((x) % x_size, (y+1) % y_size, world):
             neighbours.append(world[(x) % x_size][(y+1) % y_size])
-        # Check if cell left is free
+        # Check cell left
         if self.is_empty((x-1) % x_size, (y) % y_size, world):
             neighbours.append(world[(x-1) % x_size][(y) % y_size])
-        # Check if cell right is free
+        # Check cell right
         if self.is_empty((x+1) % x_size, (y) % y_size, world):
             neighbours.append(world[(x+1) % x_size][(y) % y_size])
 
