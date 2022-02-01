@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import random
 
-from canvas2 import *
+from canvas import *
 from animals.animal import Animal
 from animals.fish import Fish
 from animals.shark import Shark
@@ -10,8 +10,11 @@ import logging
 
 class Game():
     def __init__(self):
-        self.x_size: int = 40
-        self.y_size: int = 40
+        self.x_size: int = 10
+        self.y_size: int = 5
+
+        if self.x_size * self.y_size < Fish.total + Shark.total:
+            raise Exception("Not enough space for all animals")
 
         self.world: list[list[Animal]] = []
         self.moved_ids: list[int] = []
@@ -104,6 +107,8 @@ class Game():
 
         root = tk.Tk()
         self.app = App(self, self.x_size, self.y_size, self.world, root)
+        root.title("Number of fishes and sharks")
+        root.resizable(False, False)
         self.app.pack()
         root.mainloop()
 
