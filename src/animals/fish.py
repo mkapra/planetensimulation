@@ -1,12 +1,11 @@
-from animals.animal import Animal
-from animals.plankton import Plankton
+from . import *
 
 import random
 import logging
 
 class Fish(Animal):
 
-    # Color of the fish in the world
+    # Color of the fish
     color = 'green'
 
     # How many iterations to wait before giving birth
@@ -16,18 +15,9 @@ class Fish(Animal):
     id = 0
 
     def __init__(self, x, y, age):
-        self.x = x
-        self.y = y
-        self.age = age
-        self.id = Fish.id
+        super().__init__(x, y, self.color, self.breed_age, self.id, age)
+
         Fish.id = Fish.id + 1
-
-    def __repr__(self):
-        return f"F{self.age}"
-
-    # Check if the cell is free
-    def is_empty(self, x, y, world):
-        return type(world[x][y]) == Plankton
 
     # Move to a random neighbouring cell and give birth if old enough
     def make_move(self, world, neighbours):

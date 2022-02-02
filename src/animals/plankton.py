@@ -1,12 +1,11 @@
-from animals.animal import Animal
+from . import *
 
-class Plankton(Animal):
+class Plankton(Field):
 
     color = 'blue'
 
     def __init__(self, x, y):
-        self.x = x
-        self.y = y
+        super().__init__(x, y, self.color)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "__"

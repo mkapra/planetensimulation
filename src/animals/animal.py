@@ -1,10 +1,17 @@
-class Animal:
+from . import *
 
-    color = None
-    breedAge = None
+class Animal(Field):
 
-    def __init__(self):
-        pass
+    def __init__(self, x, y, color, breed_age, id, age):
+        self.x = x
+        self.y = y
+        self.color = color
+        self.breed_age = breed_age
+        self.id = id
+        self.age = age
+
+    def __repr__(self) -> str:
+        return f"{type(self).__name__[0]}{self.age}"
 
     # Check if neighbouring cells are free
     def get_free_neighbours(self, x, y, x_size, y_size, world):
@@ -25,5 +32,6 @@ class Animal:
 
         return neighbours
 
+    # Check if the cell is free
     def is_empty(self, x, y, world):
-       pass
+        return type(world[x][y]) == Plankton

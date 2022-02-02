@@ -1,6 +1,4 @@
-from animals.animal import Animal
-from animals.plankton import Plankton
-from animals.fish import Fish
+from . import *
 
 import random
 import logging
@@ -8,7 +6,7 @@ import logging
 
 class Shark(Animal):
 
-    # Color of the fish in the world
+    # Color of the shark
     color = 'red'
 
     # How many iterations to wait before giving birth
@@ -16,28 +14,19 @@ class Shark(Animal):
 
     # How many iterations to wait before dying of hunger
     max_hunger = 5
-    
-    # Global variable to keep track of the next id
+
+    # Static variable to keep track of the next id
     id = 0
 
     def __init__(self, x, y, age):
-        self.x = x
-        self.y = y
-        self.age = age
-        self.hunger = 0
-        self.id = Shark.id
-        Shark.id = Shark.id + 1
+        super().__init__(x, y, self.color, self.breed_age, self.id, age)
 
-    def __repr__(self):
-        return f"S{self.age}"
+        self.hunger = 0
+        Shark.id = Shark.id + 1
 
     # Check if the cell contains a fish
     def is_fish(self, x, y, world):
         return type(world[x][y]) == Fish
-
-    # Check if the cell is free
-    def is_empty(self, x, y, world):
-        return type(world[x][y]) == Plankton
 
     # Check if neighbouring cells contain fish
     def get_fish_neighbours(self, x, y, x_size, y_size, world):

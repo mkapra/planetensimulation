@@ -3,23 +3,20 @@ import random
 import argparse
 
 from canvas import *
-from animals.animal import Animal
-from animals.fish import Fish
-from animals.shark import Shark
-from animals.plankton import Plankton
+from animals import *
 import logging
 
 class Game():
     def __init__(self, columns: 10, rows: 5, initial_fishes: 10, initial_sharks: 10):
         # Width of the world
         self.x_size = columns
-        
+
         # Height of the world
         self.y_size = rows
-        
+
         self.intial_fishes = initial_fishes
         self.initial_sharks = initial_sharks
-        
+
         # If there are more animals than there is space in the world, raise an error
         if columns * rows < self.intial_fishes + self.initial_sharks:
             raise Exception("Not enough space for all animals")
