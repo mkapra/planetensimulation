@@ -20,7 +20,7 @@ class Fish(Animal):
         Fish.id = Fish.id + 1
 
     # Move to a random neighbouring cell and give birth if old enough
-    def make_move(self, world, neighbours):
+    def make_move(self, world, neighbours, stats):
         # Pick a random neighbouring cell
         neighbour = random.choice(neighbours)
 
@@ -29,6 +29,7 @@ class Fish(Animal):
             logging.debug(f"Fish {self.id} gave birth")
             world[self.x][self.y] = Fish(self.x, self.y, 0)
             self.age = -1
+            stats['fishNew'] += 1
         else:
             world[self.x][self.y] = Plankton(self.x, self.y)
 
@@ -39,13 +40,13 @@ class Fish(Animal):
         world[self.x][self.y] = self
 
     # Tick the fish
-    def tick(self, world, x_size, y_size):
+    def tick(self, world, x_size, y_size, stats):
         # Look for free neighbouring cells
         neighbours = self.get_free_neighbours(self.x, self.y, x_size, y_size, world)
         if len(neighbours) > 0:
             # Found a free neighbouring cell, move there
             logging.debug(f"Fish {self.id} found free neighbour")
-            self.make_move(world, neighbours)
+            self.make_move(world, neighbours, stats)
 
         # Increase age
         self.age += 1

@@ -46,12 +46,14 @@ class Game():
 
     # Tick all animals in the world. This is the main logic of the game
     def tick(self):
-        self.fishTotal = 0
-        self.fishNew = 0
-        self.fishDied = 0
-        self.sharkTotal = 0
-        self.sharkNew = 0
-        self.sharkDied = 0
+        self.stats = {
+            'fishTotal': 0,
+            'fishNew': 0,
+            'fishDied': 0,
+            'sharkTotal': 0,
+            'sharkNew': 0,
+            'sharkDied': 0
+        }
 
         logging.debug("tick")
 
@@ -65,7 +67,7 @@ class Game():
                     self.moved_ids.append(animal.id)
 
                     # Tick the fish
-                    animal.tick(self.world, self.x_size, self.y_size)
+                    animal.tick(self.world, self.x_size, self.y_size, self.stats)
 
         self.moved_ids.clear()
 
@@ -79,7 +81,7 @@ class Game():
                     self.moved_ids.append(animal.id)
 
                     # Tick the shark
-                    animal.tick(self.world, self.x_size, self.y_size)
+                    animal.tick(self.world, self.x_size, self.y_size, self.stats)
 
         self.moved_ids.clear()
 
@@ -87,9 +89,9 @@ class Game():
         for row in self.world:
             for animal in row:
                 if type(animal) is Fish:
-                    self.fishTotal += 1
+                    self.stats['fishTotal'] += 1
                 elif type(animal) is Shark:
-                    self.sharkTotal += 1
+                    self.stats['sharkTotal'] += 1
 
         # Update the world plot
         for row in self.world:
@@ -97,14 +99,7 @@ class Game():
                 self.app.update_animal(animal.x, animal.y, animal.color)
 
         # Return statistics of the tick
-        return {
-            'fishTotal': self.fishTotal,
-            'fishNew': self.fishNew,
-            'fishDied': self.fishDied,
-            'sharkTotal': self.sharkTotal,
-            'sharkNew': self.sharkNew,
-            'sharkDied': self.sharkDied
-        }
+        return self.stats
 
     def run(self):
         logging.info("Planetensimulation")

@@ -24,6 +24,9 @@ class App(tk.Frame):
             'sharkDied': [],
         }
 
+        self.fishDiff = []
+        self.sharkDiff = []
+
         # Variables for the animation
         self.running = False
         self.animation = None
@@ -89,9 +92,20 @@ class App(tk.Frame):
 
         # Prepare the plot for the statistics
         self.fig = plt.Figure()
-        self.ax1 = self.fig.add_subplot(111)
-        self.line1, = self.ax1.plot([], [], lw=2)
-        self.line2, = self.ax1.plot([], [], lw=2)
+        self.ax = self.fig.add_subplot(211)
+        self.ax_diff = self.fig.add_subplot(212)
+
+        self.line1, = self.ax.plot([], [], 'g', lw=2)
+        self.line1.set_label('Fish')
+        self.line2, = self.ax.plot([], [], 'r', lw=2)
+        self.line2.set_label('Sharks')
+        self.ax.legend(loc="upper left")
+
+        self.line1_diff, = self.ax_diff.plot([], [], 'g', lw=2)
+        self.line1_diff.set_label('Fish Diff')
+        self.line2_diff, = self.ax_diff.plot([], [], 'r', lw=2)
+        self.line2_diff.set_label('Sharks Diff')
+        self.ax_diff.legend(loc="upper left")
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=master)
         self.canvas.draw()
@@ -127,40 +141,10 @@ class App(tk.Frame):
         if self.running:
             self.animation.event_source.stop()
             self.btn.config(text='Un-Pause')
-            self.show_diff()
         else:
             self.animation.event_source.start()
             self.btn.config(text='Pause')
         self.running = not self.running
-
-    # Method for calculating the derivatives of the fish and shark amount
-    def show_diff(self):
-        # Calculate the derivatives
-        dx = 1
-        fishTotal = self.stats["fishTotal"]
-        fishDiff = diff(fishTotal)/dx
-        sharkTotal = self.stats["sharkTotal"]
-        sharkDiff = diff(sharkTotal)/dx
-
-        # Create a new window for the derivatives plot
-        window_diff = tk.Toplevel(self.master)
-        # window_diff.resizable(False, False)
-        window_diff.title("Änderungsrate")
-
-        # Plot the derivatives inside the new window
-        self.fig_diff = plt.Figure()
-        self.ax_diff = self.fig_diff.add_subplot(111)
-        self.line_diff_fish, = self.ax_diff.plot(fishDiff, lw=2)
-        self.line_diff_shark, = self.ax_diff.plot(sharkDiff, lw=2)
-        self.ax_diff.grid()
-
-        self.canvas_diff = FigureCanvasTkAgg(self.fig_diff, master=window_diff)
-        self.canvas_diff.draw()
-        self.canvas_diff.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
-
-        toolbar = NavigationToolbar2Tk(self.canvas_diff, window_diff)
-        toolbar.update()
-        self.canvas_diff._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
     # Method for starting the animation
     def start(self, tick=False):
@@ -206,13 +190,22 @@ class App(tk.Frame):
         self.y2data = self.stats["sharkTotal"]
         self.line1.set_data(self.xdata, self.ydata)
         self.line2.set_data(self.xdata, self.y2data)
-        self.ax1.set_ylim(0, max(self.ydata))
-        self.ax1.set_xlim(0, max([*self.xdata, 10]))
+        self.ax.set_ylim(0, max(self.ydata))
+        self.ax.set_xlim(0, max([*self.xdata, 10]))
+
+
+        self.fishDiff.append(self.stats["fishNew"][-1] - self.stats["fishDied"][-1])
+        self.sharkDiff.append(self.stats["sharkNew"][-1] - self.stats["sharkDied"][-1])
+
+        self.line1_diff.set_data(self.xdata, self.fishDiff)
+        self.line2_diff.set_data(self.xdata, self.sharkDiff)
+        self.ax_diff.set_ylim(min([*self.fishDiff, *self.sharkDiff, 1]), max([*self.fishDiff, *self.sharkDiff, 1]))
+        self.ax_diff.set_xlim(0, max([*self.xdata, 10]))
 
         # If the given amount of iterations has been reached, then stop the animation
         if i >= self.points - 1:
             self.btn.config(text='Start')
             self.running = False
             self.animation = None
-        return self.line1,
+        # return self.line1,
 

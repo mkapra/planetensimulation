@@ -49,7 +49,7 @@ class Shark(Animal):
     # Try to move to a neighbouring cell containing a fish.
     # Else move to a free neighbouring cell.
     # Give birth if the shark is old enough.
-    def make_move(self, world, neighbours):
+    def make_move(self, world, neighbours, stats):
         # Pick a random neighbouring cell
         neighbour = random.choice(neighbours)
 
@@ -58,6 +58,7 @@ class Shark(Animal):
             logging.debug(f"Shark {self.id} gave birth")
             world[self.x][self.y] = Shark(self.x, self.y, 0)
             self.age = -1
+            stats['sharkNew'] += 1
         else:
             world[self.x][self.y] = Plankton(self.x, self.y)
 
@@ -68,13 +69,14 @@ class Shark(Animal):
         world[self.x][self.y] = self
 
     # Tick the shark
-    def tick(self, world, x_size, y_size):
+    def tick(self, world, x_size, y_size, stats):
         # Look for fish in neighbouring cells
         neighbours = self.get_fish_neighbours(self.x, self.y, x_size, y_size, world)
         if len(neighbours) > 0:
             # Found a fish in a neighbouring cell
             logging.debug(f"Shark {self.id} found a fish")
-            self.make_move(world, neighbours)
+            self.make_move(world, neighbours, stats)
+            stats['fishDied'] += 1
             # Reset hunger
             self.hunger = 0
             self.age += 1
@@ -86,7 +88,7 @@ class Shark(Animal):
         if len(neighbours) > 0:
             # Found a free neighbouring cell
             logging.debug(f"Shark {self.id} found a free cell")
-            self.make_move(world, neighbours)
+            self.make_move(world, neighbours, stats)
 
         # Increase hunger because no fish has been found
         self.hunger += 1
@@ -97,4 +99,5 @@ class Shark(Animal):
         # Die if hunger is too high
         if self.hunger >= self.max_hunger:
             logging.debug(f"Shark {self.id} died of hunger")
+            stats['sharkDied'] += 1
             world[self.x][self.y] = Plankton(self.x, self.y)
