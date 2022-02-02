@@ -7,8 +7,8 @@ class Animal(Field):
         self.y = y
         self.color = color
         self.breed_age = breed_age
-        self.id = id
         self.age = age
+        self.id = id
 
     def __repr__(self) -> str:
         return f"{type(self).__name__[0]}{self.age}"
@@ -36,5 +36,8 @@ class Animal(Field):
     def is_empty(self, animal):
         return type(animal) == Plankton
 
-    
+    def make_move(self, world, neighbours):
+        pass
 
+    def tick(self, world, x_size, y_size):
+        pass

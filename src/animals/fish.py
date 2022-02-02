@@ -9,7 +9,7 @@ class Fish(Animal):
     color = 'green'
 
     # How many iterations to wait before giving birth
-    breed_age = 5
+    breed_age = None
 
     # Global variable to keep track of the id of the next id
     id = 0

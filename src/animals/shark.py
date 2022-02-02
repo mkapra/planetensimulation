@@ -9,10 +9,10 @@ class Shark(Animal):
     color = 'red'
 
     # How many iterations to wait before giving birth
-    breed_age = 8
+    breed_age = None
 
     # How many iterations to wait before dying of hunger
-    max_hunger = 5
+    max_hunger = None
 
     # Static variable to keep track of the next id
     id = 0

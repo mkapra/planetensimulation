@@ -7,12 +7,18 @@ from animals import *
 import logging
 
 class Game():
-    def __init__(self, columns: 10, rows: 5, initial_fishes: 10, initial_sharks: 10):
+    def __init__(self, columns: 40, rows: 40, initial_fishes: 200, initial_sharks: 100, fish_breed: 5,
+         shark_breed: 8, max_hunger: 5):
+
         # Width of the world
         self.x_size = columns
 
         # Height of the world
         self.y_size = rows
+
+        Fish.breed_age = fish_breed
+        Shark.breed_age = shark_breed
+        Shark.max_hunger = max_hunger
 
         self.intial_fishes = initial_fishes
         self.initial_sharks = initial_sharks
@@ -139,16 +145,25 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     # Add rows and columns to the parser
-    parser.add_argument("--rows", help="The rows of the field", type=int, default=10)
-    parser.add_argument("--columns", help="The columns of the field", type=int, default=5)
-    # Add max fishes and sharks to the parser
+    parser.add_argument("--rows", help="The rows of the field", type=int, default=40)
+    parser.add_argument("--columns", help="The columns of the field", type=int, default=40)
+
+    # Add breed cycles to the parser
+    parser.add_argument("--fish_breed", help="Cycles until a fish can breed", type=int, default=5)
+    parser.add_argument("--shark_breed", help="Cycles until a shark can breed", type=int, default=8)
+
+    # Add hunger death cycles to the parser
+    parser.add_argument("--max_hunger", help="Cycles until a shark dies due to hunger", type=int, default=5)
+
+    # Add initial fishes and sharks to the parser
     parser.add_argument(
-        "--initial_fishes", help="The number of fishes that are placed initially on the board", type=int, default=10)
+        "--initial_fishes", help="The number of fishes that are placed initially on the board", type=int, default=200)
     parser.add_argument(
-        "--initial_sharks", help="The number of sharks that are placed initially on the board", type=int, default=10)
+        "--initial_sharks", help="The number of sharks that are placed initially on the board", type=int, default=100)
 
     # parse the arguments
     args = parser.parse_args()
 
     Game(rows=args.rows, columns=args.columns, initial_fishes=args.initial_fishes,
-         initial_sharks=args.initial_sharks).run()
+         initial_sharks=args.initial_sharks, fish_breed=args.fish_breed,
+         shark_breed=args.shark_breed, max_hunger=args.max_hunger).run()
