@@ -1,7 +1,5 @@
-from curses import window
 import tkinter as tk
-from turtle import title
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib import pyplot as plt
 import matplotlib.animation as animation
 from collections import deque
@@ -45,6 +43,7 @@ class App(tk.Frame):
 
         # Create the upper Frame for the world inside the window
         self.window_world = tk.Canvas(self.window, width=x_size*10+15, height=y_size*10+15)
+
         # Create the lower Frame for the controls inside the window
         self.window_ctrl = tk.Frame(self.window)
 
@@ -93,9 +92,14 @@ class App(tk.Frame):
         self.ax1 = self.fig.add_subplot(111)
         self.line1, = self.ax1.plot([], [], lw=2)
         self.line2, = self.ax1.plot([], [], lw=2)
+
         self.canvas = FigureCanvasTkAgg(self.fig, master=master)
         self.canvas.draw()
-        self.canvas.get_tk_widget().pack()
+        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
+        toolbar = NavigationToolbar2Tk(self.canvas, master)
+        toolbar.update()
+        self.canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
     # Continue the simulation for one tick after the tick button is clicked
     def on_click_tick(self):
@@ -140,7 +144,7 @@ class App(tk.Frame):
 
         # Create a new window for the derivatives plot
         window_diff = tk.Toplevel(self.master)
-        window_diff.resizable(False, False)
+        # window_diff.resizable(False, False)
         window_diff.title("Änderungsrate")
 
         # Plot the derivatives inside the new window
@@ -149,9 +153,14 @@ class App(tk.Frame):
         self.line_diff_fish, = self.ax_diff.plot(fishDiff, lw=2)
         self.line_diff_shark, = self.ax_diff.plot(sharkDiff, lw=2)
         self.ax_diff.grid()
+
         self.canvas_diff = FigureCanvasTkAgg(self.fig_diff, master=window_diff)
         self.canvas_diff.draw()
-        self.canvas_diff.get_tk_widget().pack()
+        self.canvas_diff.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
+        toolbar = NavigationToolbar2Tk(self.canvas_diff, window_diff)
+        toolbar.update()
+        self.canvas_diff._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
     # Method for starting the animation
     def start(self, tick=False):

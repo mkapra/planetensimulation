@@ -135,7 +135,6 @@ class Game():
         root = tk.Tk()
         self.app = App(self, self.x_size, self.y_size, self.world, root)
         root.title("Number of fishes and sharks")
-        root.resizable(False, False)
         self.app.pack()
         root.mainloop()
 
