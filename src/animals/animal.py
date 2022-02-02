@@ -18,20 +18,23 @@ class Animal(Field):
         neighbours = []
 
         # Check cell above
-        if self.is_empty((x) % x_size, (y-1) % y_size, world):
+        if self.is_empty(world[(x) % x_size][(y-1) % y_size]):
             neighbours.append(world[(x) % x_size][(y-1) % y_size])
         # Check cell below
-        if self.is_empty((x) % x_size, (y+1) % y_size, world):
+        if self.is_empty(world[(x) % x_size][(y+1) % y_size]):
             neighbours.append(world[(x) % x_size][(y+1) % y_size])
         # Check cell left
-        if self.is_empty((x-1) % x_size, (y) % y_size, world):
+        if self.is_empty(world[(x-1) % x_size][(y) % y_size]):
             neighbours.append(world[(x-1) % x_size][(y) % y_size])
         # Check cell right
-        if self.is_empty((x+1) % x_size, (y) % y_size, world):
+        if self.is_empty(world[(x+1) % x_size][(y) % y_size]):
             neighbours.append(world[(x+1) % x_size][(y) % y_size])
 
         return neighbours
 
     # Check if the cell is free
-    def is_empty(self, x, y, world):
-        return type(world[x][y]) == Plankton
+    def is_empty(self, animal):
+        return type(animal) == Plankton
+
+    
+

@@ -3,7 +3,6 @@ from . import *
 import random
 import logging
 
-
 class Shark(Animal):
 
     # Color of the shark
@@ -24,28 +23,28 @@ class Shark(Animal):
         self.hunger = 0
         Shark.id = Shark.id + 1
 
-    # Check if the cell contains a fish
-    def is_fish(self, x, y, world):
-        return type(world[x][y]) == Fish
-
     # Check if neighbouring cells contain fish
     def get_fish_neighbours(self, x, y, x_size, y_size, world):
         neighbours = []
 
         # Check cell above
-        if self.is_fish((x) % x_size, (y-1) % y_size, world):
+        if self.is_fish(world[(x) % x_size][(y-1) % y_size]):
             neighbours.append(world[(x) % x_size][(y-1) % y_size])
         # Check cell below
-        if self.is_fish((x) % x_size, (y+1) % y_size, world):
+        if self.is_fish(world[(x) % x_size][(y+1) % y_size]):
             neighbours.append(world[(x) % x_size][(y+1) % y_size])
         # Check cell left
-        if self.is_fish((x-1) % x_size, (y) % y_size, world):
+        if self.is_fish(world[(x-1) % x_size][(y) % y_size]):
             neighbours.append(world[(x-1) % x_size][(y) % y_size])
         # Check cell right
-        if self.is_fish((x+1) % x_size, (y) % y_size, world):
+        if self.is_fish(world[(x+1) % x_size][(y) % y_size]):
             neighbours.append(world[(x+1) % x_size][(y) % y_size])
 
         return neighbours
+
+    # Check if the cell contains a fish
+    def is_fish(self, animal):
+        return type(animal) == Fish
 
     # Try to move to a neighbouring cell containing a fish.
     # Else move to a free neighbouring cell.
